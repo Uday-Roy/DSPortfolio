@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description"
+        content="DevoraLabs - Elite Software Agency specializing in AI Automation, Web & App Development. Premium 3D experiences, futuristic design.">
+    <title>DevoraLabs | AI • Web • Mobile • Future</title>
+    <!-- Google Fonts + Font Awesome -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Three.js Core + Addons for 3D -->
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+      }
+    }
+  </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0A0A0A;
+            font-family: 'Inter', sans-serif;
+            color: #FFFFFF;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* custom scroll */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #171717;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #F5F5F5;
+            border-radius: 10px;
+        }
+
+        /* glassmorphic cards */
+        .glass-premium {
+            background: rgba(23, 23, 23, 0.65);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 2rem;
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        section {
+            padding: 120px 0;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #FFFFFF 0%, #B0B0B0 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 3rem;
+        }
+
+        /* premium buttons */
+        .btn-glow {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 32px;
+            border-radius: 60px;
+            font-weight: 600;
+            transition: 0.3s;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            background: #FFFFFF;
+            color: #0A0A0A;
+            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.08);
+        }
+
+        .btn-glow:hover {
+            transform: translateY(-5px);
+            background: #e8e8e8;
+            box-shadow: 0 20px 30px -10px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-outline-prem {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: transparent;
+            color: white;
+        }
+
+        .btn-outline-prem:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: white;
+            transform: translateY(-5px);
+        }
+
+        /* navbar */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 18px 0;
+        }
+
+        .nav-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(145deg, #FFFFFF, #C0C0C0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #E4E4E7;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: white;
+            border-bottom: 2px solid white;
+            padding-bottom: 4px;
+        }
+
+        /* floating 3d canvas */
+        #canvas3d {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* moving tech marquee */
+        .tech-marquee {
+            background: #171717;
+            padding: 20px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            border-top: 1px solid #262626;
+            border-bottom: 1px solid #262626;
+            margin: 40px 0;
+        }
+
+        .marquee-track {
+            display: inline-block;
+            animation: scrollTech 20s linear infinite;
+        }
+
+        .marquee-track span {
+            display: inline-block;
+            margin: 0 40px;
+            font-weight: 600;
+            color: #A1A1AA;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+
+        @keyframes scrollTech {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* service cards with premium images from online */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card-prem {
+            background: #171717;
+            border-radius: 2rem;
+            padding: 0;
+            overflow: hidden;
+            transition: all 0.4s;
+            border: 1px solid #262626;
+        }
+
+        .service-card-prem:hover {
+            transform: translateY(-12px);
+            border-color: #F5F5F5;
+            box-shadow: 0 30px 40px -20px black;
+        }
+
+        .service-img {
+            height: 190px;
+            width: 100%;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .service-content {
+            padding: 1.8rem;
+        }
+
+        .service-icon {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+
+        /* project showcase with cinematic hover */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 2rem;
+        }
+
+        .portfolio-card {
+            background: #171717;
+            border-radius: 2rem;
+            overflow: hidden;
+            transition: 0.4s;
+        }
+
+        .portfolio-img {
+            height: 240px;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.6s ease;
+        }
+
+        .portfolio-card:hover .portfolio-img {
+            transform: scale(1.05);
+        }
+
+        .portfolio-info {
+            padding: 1.5rem;
+        }
+
+        /* WhatsApp float */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+            background: #25D366;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+            transition: 0.2s;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            background: #20b859;
+        }
+
+        .whatsapp-float i {
+            font-size: 2.2rem;
+            color: white;
+        }
+
+        /* footer */
+        footer {
+            border-top: 1px solid #262626;
+            padding: 50px 0;
+            text-align: center;
+            color: #A1A1AA;
+        }
+
+        @media (max-width: 900px) {
+            .nav-links {
+                display: none;
+            }
+
+            .section-title {
+                font-size: 2.5rem;
+            }
+
+            .container {
+                padding: 0 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="container nav-flex">
+            <div class="logo">DEVORALABS<span style="color:#F5F5F5;">™</span></div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#portfolio">Work</a></li>
+                <li><a href="#contact">Connect</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- WhatsApp Floating CTA -->
+    <a href="https://wa.me/9142620172?text=Hello%20DevoraLabs%2C%20I%27m%20interested%20in%20premium%20software%20solutions%20%F0%9F%9A%80"
+        target="_blank" class="whatsapp-float">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- 3D Canvas Element -->
+    <canvas id="canvas3d"
+        style="position: fixed; top:0; left:0; width:100%; height:100%; pointer-events: none; z-index: 0;"></canvas>
+
+    <main style="position: relative; z-index: 2;">
+        <!-- Hero Section with dynamic text -->
+        <section id="home" class="hero-section">
+            <div class="container hero-content">
+                <div style="max-width: 800px;">
+                    <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+                        <span style="background: rgba(245,245,245,0.1); padding: 6px 18px; border-radius: 40px;">✦
+                            AI-First Agency</span>
+                    </div>
+                    <h1 style="font-size: 5rem; font-weight: 900; line-height: 1.1;">Where <span id="movingText"
+                            style="background: linear-gradient(120deg,#FFFFFF,#A1A1AA); -webkit-background-clip:text; background-clip:text; color:transparent;">Code</span>
+                        Meets Imagination</h1>
+                    <p style="font-size: 1.3rem; color: #A1A1AA; margin: 30px 0 30px 0;">We architect AI automation, web
+                        & mobile empires, and ultra-modern UI/UX that redefine industries.</p>
+                    <div style="display: flex; gap: 20px;">
+                        <a href="#contact" class="btn-glow">Launch Project <i class="fas fa-rocket"></i></a>
+                        <a href="#portfolio" class="btn-glow btn-outline-prem">Explore Work <i
+                                class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tech moving marquee -->
+        <div class="tech-marquee">
+            <div class="marquee-track">
+                <span>React.js</span><span>Next.js</span><span>Node.js</span><span>Tailwind
+                    CSS</span><span>Three.js</span><span>AI/ML</span><span>Python</span><span>Firebase</span><span>MongoDB</span><span>Figma</span><span>Automation</span>
+                <span>React.js</span><span>Next.js</span><span>Node.js</span><span>Tailwind
+                    CSS</span><span>Three.js</span><span>AI/ML</span><span>Python</span><span>Firebase</span><span>MongoDB</span><span>Figma</span><span>Automation</span>
+            </div>
+        </div>
+
+        <!-- Services Section with premium images from online (Unsplash premium style) -->
+        <section id="services">
+            <div class="container">
+                <div class="section-title">Elite Services —<br>Beyond Boundaries</div>
+                <div class="services-grid" id="servicesGrid"></div>
+            </div>
+        </section>
+
+        <!-- Portfolio Showcase with cinematic images -->
+        <section id="portfolio">
+            <div class="container">
+                <div class="section-title">Cinematic Projects</div>
+                <div class="portfolio-grid" id="portfolioGrid"></div>
+            </div>
+        </section>
+
+        <!-- About + Innovation Section -->
+        <section id="about">
+            <div class="container">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;">
+                    <div>
+                        <h2 class="section-title" style="font-size: 2.8rem;">Architects of Digital Evolution</h2>
+                        <p style="color:#A1A1AA; line-height: 1.6;">DevoraLabs is not just an agency — it's a fusion of
+                            visionary designers, AI engineers, and full-stack alchemists. We've delivered 150+
+                            high-performance solutions, from AI healthcare bots to global fintech dashboards. Your
+                            success is our obsession.</p>
+                        <div style="display: flex; gap: 30px; margin-top: 40px;">
+                            <div>
+                                <h2>98%</h2><span>Client Retention</span>
+                            </div>
+                            <div>
+                                <h2>150+</h2><span>Projects</span>
+                            </div>
+                            <div>
+                                <h2>24/7</h2><span>Concierge Support</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-premium" style="padding: 25px; text-align: center;"><i class="fas fa-cube"
+                            style="font-size: 8rem; color:#F5F5F5;"></i>
+                        <p style="margin-top: 20px;">Uday Roy — Founder & Principal Architect</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why choose section + 3D vibe counters-->
+        <section>
+            <div class="container">
+                <div class="section-title">Why DevoraLabs?</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 2rem;">
+                    <div class="glass-premium" style="padding: 2rem; text-align:center;"><i
+                            class="fas fa-bolt fa-2x"></i>
+                        <h3>Lightning Fast</h3><span>Agile delivery</span>
+                    </div>
+                    <div class="glass-premium" style="padding: 2rem; text-align:center;"><i
+                            class="fas fa-robot fa-2x"></i>
+                        <h3>AI-Native</h3><span>Intelligent systems</span>
+                    </div>
+                    <div class="glass-premium" style="padding: 2rem; text-align:center;"><i
+                            class="fas fa-shield-alt fa-2x"></i>
+                        <h3>Bank-grade Security</h3><span>Scalable & robust</span>
+                    </div>
+                    <div class="glass-premium" style="padding: 2rem; text-align:center;"><i
+                            class="fas fa-chart-line fa-2x"></i>
+                        <h3>SEO Optimized</h3><span>Rank higher</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials slider premium -->
+        <section>
+            <div class="container">
+                <div class="section-title">Voices of Excellence</div>
+                <div style="display: flex; gap: 2rem; overflow-x: auto; padding-bottom: 20px;" id="testimonialSlider">
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact">
+            <div class="container">
+                <div class="section-title">Start your Odyssey</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
+                    <div class="glass-premium" style="padding: 2rem;">
+                        <h3>Send a Signal</h3>
+                        <form id="contactForm" style="display: flex; flex-direction: column; gap: 1rem;">
+                            <input type="text" placeholder="Full name"
+                                style="background:#171717; border:1px solid #262626; padding: 15px; border-radius: 40px; color:white;">
+                            <input type="email" placeholder="Email"
+                                style="background:#171717; border:1px solid #262626; padding: 15px; border-radius: 40px; color:white;">
+                            <textarea rows="4" placeholder="Tell us about your vision..."
+                                style="background:#171717; border:1px solid #262626; padding: 15px; border-radius: 24px; color:white;"></textarea>
+                            <button type="submit" class="btn-glow" style="justify-content:center;">Send Message <i
+                                    class="fas fa-paper-plane"></i></button>
+                        </form>
+                    </div>
+                    <div class="glass-premium" style="padding: 2rem;">
+                        <h3>Direct Connect</h3>
+                        <p><i class="fas fa-envelope"></i> udayroytech@gmail.com</p>
+                        <p><i class="fab fa-github"></i> github.com/Uday-Roy</p>
+                        <p><i class="fab fa-linkedin"></i> linkedin.com/in/udaykrroy</p>
+                        <p><i class="fab fa-instagram"></i> instagram.com/uday.kr.roy</p>
+                        <div style="margin-top: 28px; display: flex; gap: 20px;">
+                            <a href="https://github.com/Uday-Roy" target="_blank" style="color:white;"><i
+                                    class="fab fa-github fa-2x"></i></a>
+                            <a href="https://www.linkedin.com/in/udaykrroy" target="_blank" style="color:white;"><i
+                                    class="fab fa-linkedin fa-2x"></i></a>
+                            <a href="https://www.instagram.com/uday.kr.roy" target="_blank" style="color:white;"><i
+                                    class="fab fa-instagram fa-2x"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <footer>
+            <p>© 2025 DEVORALABS — Where Vision Meets Velocity. Crafted with AI & Passion.</p>
+        </footer>
+    </main>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // Setup 3D scene - rotating abstract geometry (premium)
+        const canvas = document.getElementById('canvas3d');
+        const scene = new THREE.Scene();
+        scene.background = null; // transparent
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 2, 12);
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+        // Create futuristic Torus Knot + Icosahedron
+        const group = new THREE.Group();
+        const geometry = new THREE.TorusKnotGeometry(1.2, 0.3, 200, 32, 3, 4);
+        const material = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x222222, roughness: 0.2, metalness: 0.8 });
+        const knot = new THREE.Mesh(geometry, material);
+        group.add(knot);
+
+        const icoGeo = new THREE.IcosahedronGeometry(0.8, 0);
+        const icoMat = new THREE.MeshStandardMaterial({ color: 0xF5F5F5, wireframe: false, emissive: 0x333333 });
+        const ico = new THREE.Mesh(icoGeo, icoMat);
+        ico.position.set(2.2, -0.5, -1);
+        group.add(ico);
+
+        const sphereGeo = new THREE.SphereGeometry(0.5, 32, 32);
+        const glowMat = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, emissive: 0x555555 });
+        const sphere = new THREE.Mesh(sphereGeo, glowMat);
+        sphere.position.set(-2, 1, -0.5);
+        group.add(sphere);
+
+        scene.add(group);
+
+        const light1 = new THREE.DirectionalLight(0xffffff, 1);
+        light1.position.set(2, 5, 3);
+        scene.add(light1);
+        const ambient = new THREE.AmbientLight(0x404060);
+        scene.add(ambient);
+        const backLight = new THREE.PointLight(0x556688, 0.5);
+        backLight.position.set(-2, 1, -3);
+        scene.add(backLight);
+
+        let time = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.008;
+            knot.rotation.x = time * 0.5;
+            knot.rotation.y = time * 0.8;
+            ico.rotation.x = time * 0.6;
+            ico.rotation.y = time;
+            sphere.rotation.x += 0.01;
+            sphere.rotation.y += 0.02;
+            group.rotation.y = Math.sin(time * 0.2) * 0.3;
+            camera.position.z = 11 + Math.sin(time * 0.3) * 0.2;
+            renderer.render(scene, camera);
+        }
+        animate();
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Dynamic text rotation
+        const textArray = ["Code", "AI", "Apps", "Automation", "UX Magic", "Websites"];
+        let idx = 0;
+        const movingSpan = document.getElementById('movingText');
+        setInterval(() => {
+            idx = (idx + 1) % textArray.length;
+            movingSpan.style.opacity = '0';
+            setTimeout(() => {
+                movingSpan.textContent = textArray[idx];
+                movingSpan.style.opacity = '1';
+            }, 150);
+        }, 1800);
+    </script>
+
+    <script type="text/javascript">
+        // Services with premium images (online unsplash high-quality abstract + relevant)
+        const servicesData = [
+            { title: "Website Designing", desc: "Pixel-perfect, responsive, ultra-modern designs.", img: "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=600&auto=format", icon: "fa-globe" },
+            { title: "Website Development", desc: "React, Next.js, scalable backends.", img: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&auto=format", icon: "fa-code" },
+            { title: "App Development", desc: "iOS/Android, Flutter, React Native.", img: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format", icon: "fa-mobile-alt" },
+            { title: "AI Automation Systems", desc: "LLMs, custom AI agents & RPA.", img: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&auto=format", icon: "fa-microchip" },
+            { title: "UI/UX Designing", desc: "Conversion-focused interfaces.", img: "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=600&auto=format", icon: "fa-pen-ruler" },
+            { title: "Graphic Designing", desc: "Brand identity, storytelling visuals.", img: "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=600&auto=format", icon: "fa-palette" }
+        ];
+        const servicesGrid = document.getElementById('servicesGrid');
+        servicesGrid.innerHTML = servicesData.map(s => `
+    <div class="service-card-prem">
+      <div class="service-img" style="background-image: url('${s.img}');"></div>
+      <div class="service-content">
+        <div class="service-icon"><i class="fas ${s.icon}"></i></div>
+        <h3>${s.title}</h3>
+        <p style="color:#A1A1AA">${s.desc}</p>
+      </div>
+    </div>
+  `).join('');
+
+        // Portfolio premium projects cinematic images
+        const portfolioProjects = [
+            { title: "NeoBank AI Suite", category: "AI", img: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format", tech: "Python, TensorFlow" },
+            { title: "Luxury E‑commerce Platform", category: "Web", img: "https://images.unsplash.com/photo-1523474253046-8cd2748b5fd2?w=600&auto=format", tech: "Next.js, Stripe" },
+            { title: "HealthBot AI", category: "AI", img: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&auto=format", tech: "OpenAI, FastAPI" },
+            { title: "Fitness Tracker App", category: "Mobile", img: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format", tech: "React Native" },
+            { title: "Fintech Dashboard UI", category: "Design", img: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format", tech: "Figma, Tailwind" }
+        ];
+        const portfolioGrid = document.getElementById('portfolioGrid');
+        portfolioGrid.innerHTML = portfolioProjects.map(p => `
+    <div class="portfolio-card">
+      <div class="portfolio-img" style="background-image: url('${p.img}');"></div>
+      <div class="portfolio-info">
+        <h3>${p.title}</h3>
+        <p style="color:#A1A1AA">${p.tech}</p>
+        <a href="#" class="btn-outline-prem" style="display: inline-block; margin-top: 12px; padding: 8px 20px;">Live Preview →</a>
+      </div>
+    </div>
+  `).join('');
+
+        // Testimonials slider dynamic
+        const testimonials = [
+            { name: "Riya Mehta", role: "CTO, Stellar AI", text: "DevoraLabs delivered an AI automation that saved 2000+ hours monthly. The 3D visuals? Next-level.", img: "👩‍💻" },
+            { name: "James O'Connor", role: "Product Lead", text: "Their design + development quality is world-class; the site feels like Apple meets Blade Runner.", img: "🧠" },
+            { name: "Sophia Williams", role: "Creative Director", text: "The most premium agency experience I've ever had. Fast, futuristic, flawless.", img: "✨" }
+        ];
+        const sliderDiv = document.getElementById('testimonialSlider');
+        sliderDiv.innerHTML = testimonials.map(t => `
+    <div class="glass-premium" style="min-width: 320px; padding: 2rem;">
+      <div style="font-size: 3rem;">${t.img}</div>
+      <p style="margin: 20px 0; font-style: italic;">“${t.text}”</p>
+      <h4>${t.name}</h4>
+      <span style="color:#A1A1AA">${t.role}</span>
+    </div>
+  `).join('');
+
+        // Contact form alert
+        document.getElementById('contactForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert("✨ Message received! Uday Roy will personally reach out within 24h. Welcome to DevoraLabs.");
+        });
+
+        // Scroll reveal + sticky nav + smooth animation for counters
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 200;
+                if (pageYOffset >= sectionTop) current = section.getAttribute('id');
+            });
+        });
+
+        // additional moving effect & cursor parallax feel
+        document.body.style.cursor = "default";
+        console.log("DevoraLabs — Ultra premium 3D, moving tech, WhatsApp integration ready");
+    </script>
+</body>
+
+</html>
